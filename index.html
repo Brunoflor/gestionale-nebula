@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#4f46e5">
+<title>Gestionale Nebula · Nebula 3D</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%234f46e5'/%3E%3Cpath d='M50 18 80 35v30L50 82 20 65V35z' fill='none' stroke='white' stroke-width='7' stroke-linejoin='round'/%3E%3Cpath d='M20 35l30 17 30-17M50 52v30' fill='none' stroke='white' stroke-width='5' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">
+    <span class="logo" aria-hidden="true">
+      <svg viewBox="0 0 100 100" width="28" height="28"><path d="M50 18 80 35v30L50 82 20 65V35z" fill="none" stroke="currentColor" stroke-width="8" stroke-linejoin="round"/><path d="M20 35l30 17 30-17M50 52v30" fill="none" stroke="currentColor" stroke-width="6" stroke-linejoin="round"/></svg>
+    </span>
+    <div><h1>Gestionale Nebula</h1><small>Nebula 3D · schede clienti</small></div>
+  </div>
+  <nav class="top-actions">
+    <button class="btn ghost" id="btn-settings" title="Impostazioni">⚙️ <span class="hide-sm">Impostazioni</span></button>
+    <button class="btn ghost" id="btn-data" title="Backup e dati">💾 <span class="hide-sm">Dati</span></button>
+    <button class="btn primary" id="btn-new">＋ <span>Nuovo cliente</span></button>
+  </nav>
+</header>
+
+<main>
+  <!-- LISTA -->
+  <section id="view-list">
+    <div class="summary" id="summary"></div>
+    <div class="toolbar">
+      <input type="search" id="search" placeholder="Cerca per nome, email, note…" aria-label="Cerca">
+      <select id="filter-stato" aria-label="Filtra per stato">
+        <option value="">Tutti gli stati</option>
+        <option>Da fare</option><option>In stampa</option><option>Consegnato</option><option value="__none">Senza stato</option>
+      </select>
+      <select id="sort" aria-label="Ordina per">
+        <option value="date-desc">Data (più recenti)</option>
+        <option value="date-asc">Data (più vecchi)</option>
+        <option value="name-asc">Nome (A→Z)</option>
+        <option value="name-desc">Nome (Z→A)</option>
+        <option value="margin-desc">Margine (più alto)</option>
+        <option value="margin-asc">Margine (più basso)</option>
+      </select>
+    </div>
+    <div id="list" class="list"></div>
+    <div id="empty" class="empty" hidden>
+      <div class="empty-ico">🧊</div>
+      <h2>Nessun cliente ancora</h2>
+      <p>Aggiungi la prima scheda cliente con foto del progetto, ore di stampa e prezzo.</p>
+      <button class="btn primary" id="btn-new-empty">＋ Nuovo cliente</button>
+    </div>
+  </section>
+
+  <!-- FORM -->
+  <section id="view-form" hidden>
+    <form id="form" novalidate>
+      <div class="form-head">
+        <h2 id="form-title">Nuovo cliente</h2>
+        <button type="button" class="btn ghost" id="btn-cancel">✕ Annulla</button>
+      </div>
+
+      <fieldset class="card">
+        <legend>Cliente</legend>
+        <div class="grid2">
+          <label><span>Nome e Cognome <b class="req">*</b></span>
+            <input type="text" id="f-name" required autocomplete="off" placeholder="Mario Rossi">
+          </label>
+          <label>Indirizzo email
+            <input type="email" id="f-email" autocomplete="off" placeholder="mario@esempio.it">
+          </label>
+          <label>Data registrazione
+            <input type="date" id="f-date" required>
+          </label>
+          <label>Stato
+            <select id="f-stato">
+              <option value="">— nessuno —</option>
+              <option>Da fare</option><option>In stampa</option><option>Consegnato</option>
+            </select>
+          </label>
+        </div>
+      </fieldset>
+
+      <fieldset class="card">
+        <legend>Stampa da fare</legend>
+        <label>File STL
+          <input type="file" id="f-stl" accept=".stl,model/stl,application/sla" multiple>
+        </label>
+        <ul class="files" id="stl-list"></ul>
+        <label>Link file Bambu Lab / MakerWorld
+          <input type="url" id="f-link" placeholder="https://makerworld.com/…" inputmode="url">
+        </label>
+        <label>Descrizione / note
+          <textarea id="f-notes" rows="3" placeholder="Colore, materiale, dimensioni, richieste del cliente…"></textarea>
+        </label>
+      </fieldset>
+
+      <fieldset class="card" id="photo-card">
+        <legend>Foto del progetto <b class="req">*</b></legend>
+        <p class="hint">Obbligatoria: serve per capire il progetto. Le immagini vengono ridimensionate e compresse automaticamente.</p>
+        <label class="dropzone">
+          <input type="file" id="f-photos" accept="image/*" multiple>
+          <span>📷 Scatta o scegli le foto<br><small>tocca per aggiungere una o più immagini</small></span>
+        </label>
+        <div class="thumbs" id="photo-list"></div>
+        <p class="error" id="photo-error" hidden>Aggiungi almeno una foto del progetto.</p>
+      </fieldset>
+
+      <fieldset class="card">
+        <legend>Costi e prezzo</legend>
+        <div class="grid2">
+          <label>Ore di stampa
+            <input type="text" id="f-hours" inputmode="decimal" autocomplete="off" placeholder="0">
+          </label>
+          <label>Tariffa elettricità (€/ora)
+            <input type="text" id="f-rate" inputmode="decimal" autocomplete="off">
+          </label>
+        </div>
+        <div class="mode">
+          <span>Costo materiali:</span>
+          <label class="radio"><input type="radio" name="mmode" value="filament" checked> Da filamento</label>
+          <label class="radio"><input type="radio" name="mmode" value="direct"> Importo diretto</label>
+        </div>
+        <div class="grid2" id="mat-filament">
+          <label>Filamento (grammi)
+            <input type="text" id="f-grams" inputmode="decimal" autocomplete="off" placeholder="0">
+          </label>
+          <label>€/grammo
+            <input type="text" id="f-eurg" inputmode="decimal" autocomplete="off" placeholder="0,025">
+          </label>
+        </div>
+        <div id="mat-direct" hidden>
+          <label>Costo materiali (€)
+            <input type="text" id="f-matdirect" inputmode="decimal" autocomplete="off" placeholder="0,00">
+          </label>
+        </div>
+        <label>Prezzo di vendita (€)
+          <input type="text" id="f-price" inputmode="decimal" autocomplete="off" placeholder="0,00">
+        </label>
+
+        <div class="calc" id="calc"></div>
+      </fieldset>
+
+      <div class="form-actions">
+        <button type="button" class="btn ghost" id="btn-cancel2">Annulla</button>
+        <button type="submit" class="btn primary" id="btn-save">💾 Salva scheda</button>
+      </div>
+    </form>
+  </section>
+</main>
+
+<!-- DETTAGLIO -->
+<dialog id="dlg-detail" class="sheet"><div id="detail"></div></dialog>
+
+<!-- LIGHTBOX -->
+<dialog id="dlg-lightbox" class="lightbox">
+  <button class="lb-close" id="lb-close" aria-label="Chiudi">✕</button>
+  <button class="lb-nav lb-prev" id="lb-prev" aria-label="Precedente">‹</button>
+  <img id="lb-img" alt="Foto del progetto">
+  <button class="lb-nav lb-next" id="lb-next" aria-label="Successiva">›</button>
+  <div class="lb-count" id="lb-count"></div>
+</dialog>
+
+<!-- IMPOSTAZIONI -->
+<dialog id="dlg-settings" class="modal">
+  <form method="dialog" id="settings-form">
+    <h2>Impostazioni</h2>
+    <label>Tariffa elettricità predefinita (€/ora di stampa)
+      <input type="text" id="s-rate" inputmode="decimal" autocomplete="off">
+    </label>
+    <label>Prezzo filamento predefinito (€/grammo)
+      <input type="text" id="s-eurg" inputmode="decimal" autocomplete="off" placeholder="0,025">
+    </label>
+    <p class="hint">I valori vengono usati per le nuove schede. Ogni scheda conserva la tariffa con cui è stata salvata, così i costi passati non cambiano.</p>
+    <div class="modal-actions">
+      <button type="button" class="btn ghost" id="s-cancel">Annulla</button>
+      <button type="submit" class="btn primary">Salva</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- DATI -->
+<dialog id="dlg-data" class="modal">
+  <h2>Dati e backup</h2>
+  <p class="hint">I dati sono salvati solo nel browser di questo dispositivo. Esporta un backup per spostarli su un altro dispositivo.</p>
+  <div class="stack">
+    <button class="btn" id="btn-export-json">⬇️ Esporta backup JSON (con file)</button>
+    <button class="btn" id="btn-export-csv">📄 Esporta tabella CSV (senza file)</button>
+    <button class="btn" id="btn-import">⬆️ Importa backup JSON</button>
+    <input type="file" id="import-file" accept=".json,application/json" hidden>
+  </div>
+  <div class="modal-actions"><button class="btn ghost" id="data-close">Chiudi</button></div>
+</dialog>
+
+<!-- IMPORT MODE -->
+<dialog id="dlg-import" class="modal">
+  <h2>Importa backup</h2>
+  <p id="import-info"></p>
+  <div class="stack">
+    <button class="btn primary" id="imp-merge">Unisci ai dati attuali</button>
+    <button class="btn danger" id="imp-replace">Sostituisci tutti i dati</button>
+    <button class="btn ghost" id="imp-cancel">Annulla</button>
+  </div>
+</dialog>
+
+<!-- CONFERMA -->
+<dialog id="dlg-confirm" class="modal">
+  <h2 id="confirm-title">Conferma</h2>
+  <p id="confirm-text"></p>
+  <div class="modal-actions">
+    <button class="btn ghost" id="confirm-no">Annulla</button>
+    <button class="btn danger" id="confirm-yes">Elimina</button>
+  </div>
+</dialog>
+
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+<script src="js/app.js"></script>
+</body>
+</html>
