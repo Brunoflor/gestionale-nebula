@@ -21,7 +21,7 @@ h1,h2,.stat b,.client .nums .m{font-family:var(--font-display);font-weight:400;l
 .brand h1{font-size:1.45rem;line-height:1.05;text-transform:uppercase}
 .brand h1 em{font-style:normal;color:var(--brand)}
 .brand small{color:var(--muted);font-size:.75rem}
-.logo{width:44px;height:44px;border-radius:50%;flex:none;object-fit:cover;box-shadow:0 0 0 2px var(--copper-deep),0 0 18px rgba(237,110,7,.35)}
+.logo{width:44px;height:44px;flex:none;object-fit:contain;filter:drop-shadow(0 0 10px rgba(237,110,7,.35))}
 .top-actions{display:flex;gap:6px;align-items:center}
 .topbar .btn.ghost{color:var(--ink);border-color:var(--line-strong)}
 .topbar .btn.ghost:hover{background:var(--card2)}

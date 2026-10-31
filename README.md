@@ -8,4 +8,4 @@ App web statica (HTML/CSS/JS, nessun build, nessun backend) per gestire le sched
   Usa **Dati → Esporta backup JSON** / **Importa** per spostarli o fare copie di sicurezza.
 
 ## Brand
-Look & logo ispirati al profilo Instagram [@nebula3dlab](https://www.instagram.com/nebula3dlab): nero, arancio `#ed6e07`, rame, crema. Il logo (`assets/logo-nebula3d.jpg`) è l'immagine profilo pubblica. I colori sono variabili CSS in `css/style.css` (`:root`).
+Look & logo ispirati al profilo Instagram [@nebula3dlab](https://www.instagram.com/nebula3dlab): nero, arancio `#ed6e07`, rame, crema. Il logo (`assets/logo-n.png`) è la "N" ritagliata dall'immagine profilo pubblica, su sfondo trasparente. I colori sono variabili CSS in `css/style.css` (`:root`).
